@@ -72,9 +72,37 @@ Sub FetchNBPExchangeRates(cell As Range)
     cell.Offset(0, 1).Value = GetBidValue(JSON)
 End Sub
 
-Sub ApplyMacroToRange()
+Sub ApplyMacroToRange(startRow As Integer, endRow As Integer, columnLetter As String)
     Dim cell As Range
-    For Each cell In Range("M1:M35") ' Adjust the range as needed
+    Dim rng As Range
+    Set rng = Range(columnLetter & startRow & ":" & columnLetter & endRow)
+    
+    For Each cell In rng
         FetchNBPExchangeRates cell
     Next cell
+End Sub
+
+Sub RunMacroWithInput()
+    Dim startRow As Integer
+    Dim endRow As Integer
+    Dim columnLetter As String
+    
+    startRow = CInt(InputBox("Enter start row number:"))
+    endRow = CInt(InputBox("Enter end row number:"))
+    columnLetter = InputBox("Enter column letter:")
+    
+    Call ApplyMacroToRange(startRow, endRow, columnLetter)
+End Sub
+
+Sub RunMacroForSelection()
+    Dim startRow As Integer
+    Dim endRow As Integer
+    Dim columnLetter As String
+    
+    ' Get values from current selection
+    startRow = Selection.Row
+    endRow = Selection.Row + Selection.Rows.Count - 1
+    columnLetter = Split(Selection.Address, "$")(1) ' Gets column letter from selection
+    
+    Call ApplyMacroToRange(startRow, endRow, columnLetter)
 End Sub
